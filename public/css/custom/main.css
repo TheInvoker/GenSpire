@@ -1,0 +1,59 @@
+html, body {
+	padding:0px;
+	margin:0px;
+	height:100%;
+}
+html {
+	font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif;
+}
+
+#header {
+	border-bottom:1px solid black;
+	background-color:black;
+	color:white;
+}
+#header > table {
+	/*background-color:black;
+	opacity:1;*/
+	height:114px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+#header > table > tbody > tr > td > img {
+	cursor:pointer;
+}
+#header .menu-button {
+	/*line-height:114px;*/
+	padding:0px 10px 0px 10px;
+	cursor:pointer;
+	line-height:114px;
+}
+#header .menu-button.selected {
+	border:1px solid red;
+}
+
+
+
+
+
+
+.table-content {
+	width:100%;
+}
+.table-content > tbody > tr > td {
+	width:50%
+}
+
+
+
+
+
+.user-table {
+
+}
+.user-table > tbody > tr > td:first-child > img {
+	width:100%;
+}
+.user-table > tbody > tr > td:first-child {
+	
+}

@@ -22,41 +22,76 @@
 			<table>
 				<tr>
 					<td>
-						<img title="logo" alt="logo" src="/images/logo.png"/>
-					</td>
-					<td>
 						<div class="menu-button" data-section="0">
-							Home
+							GenSpire
 						</div>
 					</td>
 					<td>
 						<div class="menu-button" data-section="1">
-							Location
+							Contact Us
 						</div>
 					</td>
 				</tr>
 			</table>
 		</div>
 		
-		<div class="section" style="display:none;">
-			<table class="table-content user-table">
-				<tr>
-					<td>
-						<img title="Peter D'Souza" alt="Peter D'Souza" src="/images/peter.png"/>
-					</td>
-					<td>
 
+		
+		
+		<div class="section" style="display:none;">
+		
+			<table width="100%">
+				<tr>
+					<td id="story-button" class="main-button" valign="top">
+						<h1>
+							Post a Story
+						</h1>
+						<h6>
+							Want to post a story you think will inspire young females into science roles?
+						</h6>
+					</td>
+					<td id="question-button" class="main-button" valign="top">
+						<h1>
+							Ask a question?
+						</h1>	
+						<h6>
+							Want to ask a question to scientists?
+						</h6>
+						<div>
+							<input type="checkbox" name="field" value="male" checked>Math/Stats
+							<input type="checkbox" name="field" value="female" checked>Medicine
+							<input type="checkbox" name="field" value="female" checked>Computing
+						</div>
+						<div>
+							<input type="radio" name="gender" value="male" checked>Female Scientists Only
+							<input type="radio" name="gender" value="female">All Scientists
+						</div>
 					</td>
 				</tr>
 			</table>
+			
+			<div id="story-maker" class="maker-container" style="display:none;">
+				<form>
+					<h3>Write a story</h3>
+					<textarea id="story-field" class="maker-field" name="story" cols="40" rows="5"></textarea>
+					<button type="button">Cancel</button><input type="submit" value="Submit"></input>
+				</form>
+			</div>
+			<div id="question-maker" class="maker-container" style="display:none;">
+				<form>
+					<h3>Ask a question</h3>
+					<textarea id="question-field" class="maker-field" name="story" cols="40" rows="5"></textarea>
+					<button type="button">Cancel</button><input type="submit" value="Submit"></input>
+				</form>
+			</div>
 		</div>
-		
 		
 		
 		<div class="section" style="display:none;">
-			<h1>Location</h1>
+			<h1>Contact Us</h1>
 			
 		</div>
+
 		
 	</body>
 </html> 

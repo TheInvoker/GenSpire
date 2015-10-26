@@ -10,10 +10,19 @@ $(document).ready(function() {
 	
 	$("#header div.menu-button").eq(0).click();
 	
-	$("#header img:first-child").click(function() {
-		$("#header div.menu-button.selected").removeClass("selected");
-		$("#header div.menu-button").eq(0).addClass("selected");
-		$("body div.section:visible").hide();
-		$("body div.section").eq(0).show();
+	
+	$("#story-button").click(function(){
+		$("#story-maker").show();
+		$("#question-maker").hide();
+	});
+	$("#question-button").click(function(){
+		$("#story-maker").hide();
+		$("#question-maker").show();
+	});
+	$("#question-button input").click(function(event){
+		event.stopPropagation();
+	});
+	$(".maker-container button").click(function() {
+		$(this).closest("div").hide();
 	});
 });

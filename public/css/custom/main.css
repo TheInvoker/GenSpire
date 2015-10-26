@@ -7,15 +7,15 @@ html {
 	font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif;
 }
 
+
+
 #header {
 	border-bottom:1px solid black;
 	background-color:black;
 	color:white;
 }
 #header > table {
-	/*background-color:black;
-	opacity:1;*/
-	height:114px;
+	height:50px;
     border-spacing: 0;
     border-collapse: collapse;
 }
@@ -23,37 +23,40 @@ html {
 	cursor:pointer;
 }
 #header .menu-button {
-	/*line-height:114px;*/
 	padding:0px 10px 0px 10px;
 	cursor:pointer;
-	line-height:114px;
+	line-height:50px;
 }
 #header .menu-button.selected {
-	border:1px solid red;
+	background-color:#353535;
 }
 
 
 
 
-
-
-.table-content {
-	width:100%;
+#story-button {
+	background-color:#199600;
 }
-.table-content > tbody > tr > td {
-	width:50%
+#question-button {
+	background-color:#218692;
+}
+.main-button {
+	width:50%;
+	color:white;
+	padding:10px;
+	cursor:pointer;
+	text-align:center;
 }
 
 
 
 
-
-.user-table {
-
-}
-.user-table > tbody > tr > td:first-child > img {
-	width:100%;
-}
-.user-table > tbody > tr > td:first-child {
+#story-maker {
 	
+}
+#question-maker {
+	
+}
+.maker-field {
+	width:100%;
 }

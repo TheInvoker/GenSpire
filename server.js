@@ -650,10 +650,10 @@ io.on('connection', function(socket){
 		QUESTIONS_MODULE.get_posts(socket);
 	});
 	socket.on('update_question', function(data){
-		QUESTIONS_MODULE.update_post(socket, data.post_id, data.title, data.question);
+		QUESTIONS_MODULE.update_post(socket, data.question_id, data.title, data.question);
 	});
 	socket.on('delete_question', function(data){
-		QUESTIONS_MODULE.delete_post(socket, data.post_id);
+		QUESTIONS_MODULE.delete_post(socket, data.question_id);
 	});
 
 	socket.on('create_question_feedback', function(data){

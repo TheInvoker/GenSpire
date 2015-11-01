@@ -57,9 +57,9 @@ var QUESTIONS_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('create_question_fail',  err.message);
+					socket.emit('get_question_fail',  err.message);
 				} else {
-					socket.emit('create_question_succeed',  rows);
+					socket.emit('get_question_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -106,7 +106,7 @@ var QUESTIONS_FEEDBACK_MODULE = {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "INSERT INTO question_feedback (user_id, date_created, last_modified, rating, question_id) \
-						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(rating) + "', '" + connection.escape(question_id) + "')";
+						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), " + connection.escape(rating) + ", " + connection.escape(question_id) + ")";
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
@@ -130,9 +130,9 @@ var QUESTIONS_FEEDBACK_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('create_question_feedback_fail',  err.message);
+					socket.emit('get_question_feedback_fail',  err.message);
 				} else {
-					socket.emit('create_question_feedback_succeed',  rows);
+					socket.emit('get_question_feedback_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -142,7 +142,7 @@ var QUESTIONS_FEEDBACK_MODULE = {
 	update_post : function(socket, feedback_id, rating) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "UPDATE question_feedback SET last_modified=NOW(), rating='" + connection.escape(rating) + "' \
+			var query = "UPDATE question_feedback SET last_modified=NOW(), rating=" + connection.escape(rating) + " \
 						 WHERE id=" + connection.escape(feedback_id);
 						 
 			connection.query(query, function(err, rows, fields) {
@@ -203,9 +203,9 @@ var ANSWER_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('create_answer_fail',  err.message);
+					socket.emit('get_answer_fail',  err.message);
 				} else {
-					socket.emit('create_answer_succeed',  rows);
+					socket.emit('get_answer_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -252,7 +252,7 @@ var ANSWER_FEEDBACK_MODULE = {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "INSERT INTO answer_feedback (user_id, date_created, last_modified, rating, question_id) \
-						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(rating) + "', '" + connection.escape(answer_id) + "')";
+						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), " + connection.escape(rating) + ", " + connection.escape(answer_id) + ")";
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
@@ -271,14 +271,14 @@ var ANSWER_FEEDBACK_MODULE = {
 			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
 						 FROM answer_feedback f \
 						 JOIN user u ON u.id=f.user_id \
-						 WHERE f.question_id=" + connection.escape(answer_id) + " \
+						 WHERE f.answer_id=" + connection.escape(answer_id) + " \
 						 ORDER BY q.date_created ASC";
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('create_answer_feedback_fail',  err.message);
+					socket.emit('get_answer_feedback_fail',  err.message);
 				} else {
-					socket.emit('create_answer_feedback_succeed',  rows);
+					socket.emit('get_answer_feedback_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -288,7 +288,7 @@ var ANSWER_FEEDBACK_MODULE = {
 	update_post : function(socket, feedback_id, rating) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "UPDATE answer_feedback SET last_modified=NOW(), rating='" + connection.escape(rating) + "' \
+			var query = "UPDATE answer_feedback SET last_modified=NOW(), rating=" + connection.escape(rating) + " \
 						 WHERE id=" + connection.escape(feedback_id);
 						 
 			connection.query(query, function(err, rows, fields) {
@@ -348,9 +348,9 @@ var STORY_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('create_story_fail',  err.message);
+					socket.emit('get_story_fail',  err.message);
 				} else {
-					socket.emit('create_story_succeed',  rows);
+					socket.emit('get_story_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -397,7 +397,7 @@ var STORY_FEEDBACK_MODULE = {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "INSERT INTO story_feedback (user_id, date_created, last_modified, rating, story_id) \
-						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(rating) + "', '" + connection.escape(story_id) + "')";
+						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), " + connection.escape(rating) + ", " + connection.escape(story_id) + ")";
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
@@ -421,9 +421,9 @@ var STORY_FEEDBACK_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('create_story_feedback_fail',  err.message);
+					socket.emit('get_story_feedback_fail',  err.message);
 				} else {
-					socket.emit('create_story_feedback_succeed',  rows);
+					socket.emit('get_story_feedback_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -433,7 +433,7 @@ var STORY_FEEDBACK_MODULE = {
 	update_post : function(socket, feedback_id, rating) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "UPDATE story_feedback SET last_modified=NOW(), rating='" + connection.escape(rating) + "' \
+			var query = "UPDATE story_feedback SET last_modified=NOW(), rating=" + connection.escape(rating) + " \
 						 WHERE id=" + connection.escape(feedback_id);
 						 
 			connection.query(query, function(err, rows, fields) {
@@ -494,9 +494,9 @@ var COMMENT_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('create_comment_fail',  err.message);
+					socket.emit('get_comment_fail',  err.message);
 				} else {
-					socket.emit('create_comment_succeed',  rows);
+					socket.emit('get_comment_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -543,7 +543,7 @@ var COMMENT_FEEDBACK_MODULE = {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "INSERT INTO comment_feedback (user_id, date_created, last_modified, rating, comment_id) \
-						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(rating) + "', '" + connection.escape(comment_id) + "')";
+						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), " + connection.escape(rating) + ", " + connection.escape(comment_id) + ")";
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
@@ -567,9 +567,9 @@ var COMMENT_FEEDBACK_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('create_comment_feedback_fail',  err.message);
+					socket.emit('get_comment_feedback_fail',  err.message);
 				} else {
-					socket.emit('create_comment_feedback_succeed',  rows);
+					socket.emit('get_comment_feedback_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -579,7 +579,7 @@ var COMMENT_FEEDBACK_MODULE = {
 	update_post : function(socket, feedback_id, rating) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "UPDATE comment_feedback SET last_modified=NOW(), rating='" + connection.escape(rating) + "' \
+			var query = "UPDATE comment_feedback SET last_modified=NOW(), rating=" + connection.escape(rating) + " \
 						 WHERE id=" + connection.escape(feedback_id);
 						 
 			connection.query(query, function(err, rows, fields) {
@@ -708,16 +708,16 @@ io.on('connection', function(socket){
 		STORY_MODULE.delete_post(socket, data.story_id);
 	});
 	
-	socket.on('create_question_feedback', function(data){
+	socket.on('create_story_feedback', function(data){
 		STORY_FEEDBACK_MODULE.create_post(socket, data.user_id, data.story_id, data.rating);
 	});
-	socket.on('get_questions_feedback', function(data){
+	socket.on('get_story_feedback', function(data){
 		STORY_FEEDBACK_MODULE.get_posts(socket, data.story_id);
 	});
-	socket.on('update_question_feedback', function(data){
+	socket.on('update_story_feedback', function(data){
 		STORY_FEEDBACK_MODULE.update_post(socket, data.feedback_id, data.rating);
 	});
-	socket.on('delete_question_feedback', function(data){
+	socket.on('delete_story_feedback', function(data){
 		STORY_FEEDBACK_MODULE.delete_post(socket, data.feedback_id);
 	});
 	
@@ -734,16 +734,16 @@ io.on('connection', function(socket){
 		COMMENT_MODULE.delete_post(socket, data.comment_id);
 	});
 	
-	socket.on('create_answer_feedback', function(data){
+	socket.on('create_comment_feedback', function(data){
 		COMMENT_FEEDBACK_MODULE.create_post(socket, data.user_id, data.comment_id, data.rating);
 	});
-	socket.on('get_answers_feedback', function(data){
+	socket.on('get_comment_feedback', function(data){
 		COMMENT_FEEDBACK_MODULE.get_posts(socket, data.comment_id);
 	});
-	socket.on('update_answer_feedback', function(data){
+	socket.on('update_comment_feedback', function(data){
 		COMMENT_FEEDBACK_MODULE.update_post(socket, data.feedback_id, data.rating);
 	});
-	socket.on('delete_answer_feedback', function(data){
+	socket.on('delete_comment_feedback', function(data){
 		COMMENT_FEEDBACK_MODULE.delete_post(socket, data.feedback_id);
 	});
 	

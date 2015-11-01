@@ -246,6 +246,79 @@ var ANSWER_MODULE = {
 	}
 };
 
+var ANSWER_FEEDBACK_MODULE = {
+
+	create_post : function(socket, user_id, answer_id, rating) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "INSERT INTO answer_feedback (user_id, date_created, last_modified, rating, question_id) \
+						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(rating) + "', '" + connection.escape(answer_id) + "')";
+						 
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('create_answer_feedback_fail',  err.message);
+				} else {
+					socket.emit('create_answer_feedback_succeed',  1);
+				}
+				connection.end();
+			});
+		});
+	},
+	
+	get_posts : function(socket, answer_id) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+						 FROM answer_feedback f \
+						 JOIN user u ON u.id=f.user_id \
+						 WHERE f.question_id=" + connection.escape(answer_id) + " \
+						 ORDER BY q.date_created ASC";
+						 
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('create_answer_feedback_fail',  err.message);
+				} else {
+					socket.emit('create_answer_feedback_succeed',  rows);
+				}
+				connection.end();
+			});
+		});
+	},
+	
+	update_post : function(socket, feedback_id, rating) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "UPDATE answer_feedback SET last_modified=NOW(), rating='" + connection.escape(rating) + "' \
+						 WHERE id=" + connection.escape(feedback_id);
+						 
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('update_answer_feedback_fail',  err.message);
+				} else {
+					socket.emit('update_answer_feedback_succeed',  1);
+				}
+				connection.end();
+			});
+		});
+	},
+	
+	delete_post : function(socket, feedback_id) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "DELETE FROM answer_feedback WHERE id=" + connection.escape(feedback_id);
+
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('delete_answer_feedback_fail',  err.message);
+				} else {
+					socket.emit('delete_answer_feedback_succeed',  1);
+				}
+				connection.end();
+			});
+		});
+	}
+};
+
 var STORY_MODULE = {
 
 	create_post : function(socket, user_id, title, story) {
@@ -311,6 +384,79 @@ var STORY_MODULE = {
 					socket.emit('delete_story_fail',  err.message);
 				} else {
 					socket.emit('delete_story_succeed',  1);
+				}
+				connection.end();
+			});
+		});
+	}
+};
+
+var STORY_FEEDBACK_MODULE = {
+
+	create_post : function(socket, user_id, story_id, rating) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "INSERT INTO story_feedback (user_id, date_created, last_modified, rating, story_id) \
+						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(rating) + "', '" + connection.escape(story_id) + "')";
+						 
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('create_story_feedback_fail',  err.message);
+				} else {
+					socket.emit('create_story_feedback_succeed',  1);
+				}
+				connection.end();
+			});
+		});
+	},
+	
+	get_posts : function(socket, story_id) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+						 FROM story_feedback f \
+						 JOIN user u ON u.id=f.user_id \
+						 WHERE f.story_id=" + connection.escape(story_id) + " \
+						 ORDER BY q.date_created ASC";
+						 
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('create_story_feedback_fail',  err.message);
+				} else {
+					socket.emit('create_story_feedback_succeed',  rows);
+				}
+				connection.end();
+			});
+		});
+	},
+	
+	update_post : function(socket, feedback_id, rating) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "UPDATE story_feedback SET last_modified=NOW(), rating='" + connection.escape(rating) + "' \
+						 WHERE id=" + connection.escape(feedback_id);
+						 
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('update_story_feedback_fail',  err.message);
+				} else {
+					socket.emit('update_story_feedback_succeed',  1);
+				}
+				connection.end();
+			});
+		});
+	},
+	
+	delete_post : function(socket, feedback_id) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "DELETE FROM story_feedback WHERE id=" + connection.escape(feedback_id);
+
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('delete_story_feedback_fail',  err.message);
+				} else {
+					socket.emit('delete_story_feedback_succeed',  1);
 				}
 				connection.end();
 			});
@@ -391,7 +537,78 @@ var COMMENT_MODULE = {
 	}
 };
 
+var COMMENT_FEEDBACK_MODULE = {
 
+	create_post : function(socket, user_id, comment_id, rating) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "INSERT INTO comment_feedback (user_id, date_created, last_modified, rating, comment_id) \
+						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(rating) + "', '" + connection.escape(comment_id) + "')";
+						 
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('create_comment_feedback_fail',  err.message);
+				} else {
+					socket.emit('create_comment_feedback_succeed',  1);
+				}
+				connection.end();
+			});
+		});
+	},
+	
+	get_posts : function(socket, comment_id) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+						 FROM comment_feedback f \
+						 JOIN user u ON u.id=f.user_id \
+						 WHERE f.comment_id=" + connection.escape(comment_id) + " \
+						 ORDER BY q.date_created ASC";
+						 
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('create_comment_feedback_fail',  err.message);
+				} else {
+					socket.emit('create_comment_feedback_succeed',  rows);
+				}
+				connection.end();
+			});
+		});
+	},
+	
+	update_post : function(socket, feedback_id, rating) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "UPDATE comment_feedback SET last_modified=NOW(), rating='" + connection.escape(rating) + "' \
+						 WHERE id=" + connection.escape(feedback_id);
+						 
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('update_comment_feedback_fail',  err.message);
+				} else {
+					socket.emit('update_comment_feedback_succeed',  1);
+				}
+				connection.end();
+			});
+		});
+	},
+	
+	delete_post : function(socket, feedback_id) {
+		SQL_MODULE.runSQL(socket, function(connection) {
+			
+			var query = "DELETE FROM comment_feedback WHERE id=" + connection.escape(feedback_id);
+
+			connection.query(query, function(err, rows, fields) {
+				if (err) {
+					socket.emit('delete_comment_feedback_fail',  err.message);
+				} else {
+					socket.emit('delete_comment_feedback_succeed',  1);
+				}
+				connection.end();
+			});
+		});
+	}
+};
 
 
 
@@ -465,6 +682,18 @@ io.on('connection', function(socket){
 		ANSWER_MODULE.delete_post(socket, data.answer_id);
 	});
 	
+	socket.on('create_answer_feedback', function(data){
+		ANSWER_FEEDBACK_MODULE.create_post(socket, data.user_id, data.answer_id, data.rating);
+	});
+	socket.on('get_answers_feedback', function(data){
+		ANSWER_FEEDBACK_MODULE.get_posts(socket, data.answer_id);
+	});
+	socket.on('update_answer_feedback', function(data){
+		ANSWER_FEEDBACK_MODULE.update_post(socket, data.feedback_id, data.rating);
+	});
+	socket.on('delete_answer_feedback', function(data){
+		ANSWER_FEEDBACK_MODULE.delete_post(socket, data.feedback_id);
+	});
 	
 	socket.on('create_story', function(data){
 		STORY_MODULE.create_post(socket, data.user_id, data.title, data.story);
@@ -479,6 +708,18 @@ io.on('connection', function(socket){
 		STORY_MODULE.delete_post(socket, data.story_id);
 	});
 	
+	socket.on('create_question_feedback', function(data){
+		STORY_FEEDBACK_MODULE.create_post(socket, data.user_id, data.story_id, data.rating);
+	});
+	socket.on('get_questions_feedback', function(data){
+		STORY_FEEDBACK_MODULE.get_posts(socket, data.story_id);
+	});
+	socket.on('update_question_feedback', function(data){
+		STORY_FEEDBACK_MODULE.update_post(socket, data.feedback_id, data.rating);
+	});
+	socket.on('delete_question_feedback', function(data){
+		STORY_FEEDBACK_MODULE.delete_post(socket, data.feedback_id);
+	});
 	
 	socket.on('create_comment', function(data){
 		COMMENT_MODULE.create_post(socket, data.user_id, data.story_id, data.comment);
@@ -493,7 +734,18 @@ io.on('connection', function(socket){
 		COMMENT_MODULE.delete_post(socket, data.comment_id);
 	});
 	
-	
+	socket.on('create_answer_feedback', function(data){
+		COMMENT_FEEDBACK_MODULE.create_post(socket, data.user_id, data.comment_id, data.rating);
+	});
+	socket.on('get_answers_feedback', function(data){
+		COMMENT_FEEDBACK_MODULE.get_posts(socket, data.comment_id);
+	});
+	socket.on('update_answer_feedback', function(data){
+		COMMENT_FEEDBACK_MODULE.update_post(socket, data.feedback_id, data.rating);
+	});
+	socket.on('delete_answer_feedback', function(data){
+		COMMENT_FEEDBACK_MODULE.delete_post(socket, data.feedback_id);
+	});
 	
 	
 	

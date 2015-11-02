@@ -31,32 +31,38 @@ $(document).ready(function() {
 	});
 	
 	setUpSockets();
+	
+	showStories();
 });
 
 
 function setUpSockets() {
 	var socket = io();
+	
+	socket.on('SQL_ERROR', function(data) {
+		showError(data);
+	});
 
 	socket.on('create_question_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('create_question_succeed', function(data){
 
 	});
 	socket.on('read_questions_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('read_questions_succeed', function(data){
 
 	});
 	socket.on('update_question_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('update_question_succeed', function(data){
 
 	});
 	socket.on('delete_question_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('delete_question_succeed', function(data){
 
@@ -64,25 +70,25 @@ function setUpSockets() {
 	
 	
 	socket.on('create_question_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('create_question_feedback_succeed', function(data){
 
 	});
 	socket.on('read_questions_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('read_questions_feedback_succeed', function(data){
 
 	});
 	socket.on('update_question_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('update_question_feedback_succeed', function(data){
 
 	});
 	socket.on('delete_question_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('delete_question_feedback_succeed', function(data){
 
@@ -90,25 +96,25 @@ function setUpSockets() {
 	
 	
 	socket.on('create_answer_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('create_answer_succeed', function(data){
 
 	});
 	socket.on('read_answers_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('read_answers_succeed', function(data){
 
 	});
 	socket.on('update_answer_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('update_answer_succeed', function(data){
 
 	});
 	socket.on('delete_answer_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('delete_answer_succeed', function(data){
 
@@ -116,25 +122,25 @@ function setUpSockets() {
 	
 	
 	socket.on('create_answer_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('create_answer_feedback_succeed', function(data){
 
 	});
 	socket.on('read_answers_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('read_answers_feedback_succeed', function(data){
 
 	});
 	socket.on('update_answer_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('update_answer_feedback_succeed', function(data){
 
 	});
 	socket.on('delete_answer_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('delete_answer_feedback_succeed', function(data){
 
@@ -142,25 +148,25 @@ function setUpSockets() {
 	
 	
 	socket.on('create_story_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('create_story_succeed', function(data){
 
 	});
 	socket.on('read_stories_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('read_stories_succeed', function(data){
-
+		alert(JSON.stringify(data));
 	});
 	socket.on('update_story_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('update_story_succeed', function(data){
 
 	});
 	socket.on('delete_story_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('delete_story_succeed', function(data){
 
@@ -168,25 +174,25 @@ function setUpSockets() {
 
 
 	socket.on('create_story_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('create_story_feedback_succeed', function(data){
 
 	});
 	socket.on('read_stories_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('read_stories_feedback_succeed', function(data){
 
 	});
 	socket.on('update_story_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('update_story_feedback_succeed', function(data){
 
 	});
 	socket.on('delete_story_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('delete_story_feedback_succeed', function(data){
 
@@ -194,25 +200,25 @@ function setUpSockets() {
 	
 	
 	socket.on('create_comment_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('create_comment_succeed', function(data){
 
 	});
 	socket.on('read_comments_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('read_comments_succeed', function(data){
 
 	});
 	socket.on('update_comment_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('update_comment_succeed', function(data){
 
 	});
 	socket.on('delete_comment_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('delete_comment_succeed', function(data){
 
@@ -220,30 +226,34 @@ function setUpSockets() {
 	
 	
 	socket.on('create_comment_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('create_comment_feedback_succeed', function(data){
 
 	});
 	socket.on('read_comments_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('read_comments_feedback_succeed', function(data){
 
 	});
 	socket.on('update_comment_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('update_comment_feedback_succeed', function(data){
 
 	});
 	socket.on('delete_comment_feedback_fail', function(data){
-
+		showError(data);
 	});
 	socket.on('delete_comment_feedback_succeed', function(data){
 
 	});	
 
+	
+	
+	
+	
 	
 	
 	
@@ -294,11 +304,7 @@ function setUpSockets() {
 		});
 	};
 		
-		
-		
-		
-		
-		
+	
 		
 	POST.create_answer = function(user_id, question_id, answer) {
 		socket.emit('create_answer', {
@@ -348,13 +354,7 @@ function setUpSockets() {
 		});
 	};
 		
-		
-		
-		
-		
-		
-		
-		
+	
 		
 	POST.create_story = function(user_id, title, story) {	
 		socket.emit('create_story', {
@@ -452,4 +452,13 @@ function setUpSockets() {
 			feedback_id : feedback_id
 		});
 	};
+}
+
+
+function showError(msg) {
+	alert(msg);
+}
+
+function showStories() {
+	POST.read_stories();
 }

@@ -28,7 +28,7 @@ var SQL_MODULE = {
 };
 
 
-var QUESTIONS_MODULE = {
+var QUESTION_MODULE = {
 
 	create_post : function(socket, user_id, title, question) {
 		SQL_MODULE.runSQL(socket, function(connection) {
@@ -47,7 +47,7 @@ var QUESTIONS_MODULE = {
 		});
 	},
 	
-	get_posts : function(socket) {
+	read_posts : function(socket) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "SELECT q.id, q.user_id, q.date_created, q.last_modified, q.title, q.question, u.first_name, u.last_name, u.profile_page, u.avatar_link \
@@ -57,9 +57,9 @@ var QUESTIONS_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('get_question_fail',  err.message);
+					socket.emit('read_questions_fail',  err.message);
 				} else {
-					socket.emit('get_question_succeed',  rows);
+					socket.emit('read_questions_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -100,7 +100,7 @@ var QUESTIONS_MODULE = {
 	}
 };
 
-var QUESTIONS_FEEDBACK_MODULE = {
+var QUESTION_FEEDBACK_MODULE = {
 
 	create_post : function(socket, user_id, question_id, rating) {
 		SQL_MODULE.runSQL(socket, function(connection) {
@@ -119,7 +119,7 @@ var QUESTIONS_FEEDBACK_MODULE = {
 		});
 	},
 	
-	get_posts : function(socket, question_id) {
+	read_posts : function(socket, question_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
@@ -130,9 +130,9 @@ var QUESTIONS_FEEDBACK_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('get_question_feedback_fail',  err.message);
+					socket.emit('read_questions_feedback_fail',  err.message);
 				} else {
-					socket.emit('get_question_feedback_succeed',  rows);
+					socket.emit('read_questions_feedback_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -192,7 +192,7 @@ var ANSWER_MODULE = {
 		});
 	},
 	
-	get_posts : function(socket, question_id) {
+	read_posts : function(socket, question_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "SELECT a.id, a.user_id, a.date_created, a.last_modified, a.answer, u.first_name, u.last_name, u.profile_page, u.avatar_link \
@@ -203,9 +203,9 @@ var ANSWER_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('get_answer_fail',  err.message);
+					socket.emit('read_answers_fail',  err.message);
 				} else {
-					socket.emit('get_answer_succeed',  rows);
+					socket.emit('read_answers_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -265,7 +265,7 @@ var ANSWER_FEEDBACK_MODULE = {
 		});
 	},
 	
-	get_posts : function(socket, answer_id) {
+	read_posts : function(socket, answer_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
@@ -276,9 +276,9 @@ var ANSWER_FEEDBACK_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('get_answer_feedback_fail',  err.message);
+					socket.emit('read_answers_feedback_fail',  err.message);
 				} else {
-					socket.emit('get_answer_feedback_succeed',  rows);
+					socket.emit('read_answers_feedback_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -338,7 +338,7 @@ var STORY_MODULE = {
 		});
 	},
 	
-	get_posts : function(socket) {
+	read_posts : function(socket) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "SELECT s.id, s.user_id, s.date_created, s.last_modified, s.title, s.story, u.first_name, u.last_name, u.profile_page, u.avatar_link \
@@ -348,9 +348,9 @@ var STORY_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('get_story_fail',  err.message);
+					socket.emit('read_stories_fail',  err.message);
 				} else {
-					socket.emit('get_story_succeed',  rows);
+					socket.emit('read_stories_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -410,7 +410,7 @@ var STORY_FEEDBACK_MODULE = {
 		});
 	},
 	
-	get_posts : function(socket, story_id) {
+	read_posts : function(socket, story_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
@@ -421,9 +421,9 @@ var STORY_FEEDBACK_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('get_story_feedback_fail',  err.message);
+					socket.emit('read_stories_feedback_fail',  err.message);
 				} else {
-					socket.emit('get_story_feedback_succeed',  rows);
+					socket.emit('read_stories_feedback_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -483,7 +483,7 @@ var COMMENT_MODULE = {
 		});
 	},
 	
-	get_posts : function(socket, story_id) {
+	read_posts : function(socket, story_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "SELECT c.id, c.user_id, c.date_created, c.last_modified, c.comment, u.first_name, u.last_name, u.profile_page, u.avatar_link \
@@ -494,9 +494,9 @@ var COMMENT_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('get_comment_fail',  err.message);
+					socket.emit('read_comments_fail',  err.message);
 				} else {
-					socket.emit('get_comment_succeed',  rows);
+					socket.emit('read_comments_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -556,7 +556,7 @@ var COMMENT_FEEDBACK_MODULE = {
 		});
 	},
 	
-	get_posts : function(socket, comment_id) {
+	read_posts : function(socket, comment_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
@@ -567,9 +567,9 @@ var COMMENT_FEEDBACK_MODULE = {
 						 
 			connection.query(query, function(err, rows, fields) {
 				if (err) {
-					socket.emit('get_comment_feedback_fail',  err.message);
+					socket.emit('read_comments_feedback_fail',  err.message);
 				} else {
-					socket.emit('get_comment_feedback_succeed',  rows);
+					socket.emit('read_comments_feedback_succeed',  rows);
 				}
 				connection.end();
 			});
@@ -644,36 +644,36 @@ io.on('connection', function(socket){
 	
 	
 	socket.on('create_question', function(data){
-		QUESTIONS_MODULE.create_post(socket, data.user_id, data.title, data.question);
+		QUESTION_MODULE.create_post(socket, data.user_id, data.title, data.question);
 	});
-	socket.on('get_questions', function(data){
-		QUESTIONS_MODULE.get_posts(socket);
+	socket.on('read_questions', function(data){
+		QUESTION_MODULE.read_posts(socket);
 	});
 	socket.on('update_question', function(data){
-		QUESTIONS_MODULE.update_post(socket, data.question_id, data.title, data.question);
+		QUESTION_MODULE.update_post(socket, data.question_id, data.title, data.question);
 	});
 	socket.on('delete_question', function(data){
-		QUESTIONS_MODULE.delete_post(socket, data.question_id);
+		QUESTION_MODULE.delete_post(socket, data.question_id);
 	});
 
 	socket.on('create_question_feedback', function(data){
-		QUESTIONS_FEEDBACK_MODULE.create_post(socket, data.user_id, data.question_id, data.rating);
+		QUESTION_FEEDBACK_MODULE.create_post(socket, data.user_id, data.question_id, data.rating);
 	});
-	socket.on('get_questions_feedback', function(data){
-		QUESTIONS_FEEDBACK_MODULE.get_posts(socket, data.question_id);
+	socket.on('read_questions_feedback', function(data){
+		QUESTION_FEEDBACK_MODULE.read_posts(socket, data.question_id);
 	});
 	socket.on('update_question_feedback', function(data){
-		QUESTIONS_FEEDBACK_MODULE.update_post(socket, data.feedback_id, data.rating);
+		QUESTION_FEEDBACK_MODULE.update_post(socket, data.feedback_id, data.rating);
 	});
 	socket.on('delete_question_feedback', function(data){
-		QUESTIONS_FEEDBACK_MODULE.delete_post(socket, data.feedback_id);
+		QUESTION_FEEDBACK_MODULE.delete_post(socket, data.feedback_id);
 	});
 	
 	socket.on('create_answer', function(data){
 		ANSWER_MODULE.create_post(socket, data.user_id, data.question_id, data.answer);
 	});
-	socket.on('get_answer', function(data){
-		ANSWER_MODULE.get_posts(socket, data.question_id);
+	socket.on('read_answers', function(data){
+		ANSWER_MODULE.read_posts(socket, data.question_id);
 	});
 	socket.on('update_answer', function(data){
 		ANSWER_MODULE.update_post(socket, data.answer_id, data.answer);
@@ -685,8 +685,8 @@ io.on('connection', function(socket){
 	socket.on('create_answer_feedback', function(data){
 		ANSWER_FEEDBACK_MODULE.create_post(socket, data.user_id, data.answer_id, data.rating);
 	});
-	socket.on('get_answers_feedback', function(data){
-		ANSWER_FEEDBACK_MODULE.get_posts(socket, data.answer_id);
+	socket.on('read_answers_feedback', function(data){
+		ANSWER_FEEDBACK_MODULE.read_posts(socket, data.answer_id);
 	});
 	socket.on('update_answer_feedback', function(data){
 		ANSWER_FEEDBACK_MODULE.update_post(socket, data.feedback_id, data.rating);
@@ -698,8 +698,8 @@ io.on('connection', function(socket){
 	socket.on('create_story', function(data){
 		STORY_MODULE.create_post(socket, data.user_id, data.title, data.story);
 	});
-	socket.on('get_stories', function(data){
-		STORY_MODULE.get_posts(socket);
+	socket.on('read_stories', function(data){
+		STORY_MODULE.read_posts(socket);
 	});
 	socket.on('update_story', function(data){
 		STORY_MODULE.update_post(socket, data.story_id, data.title, data.story);
@@ -711,8 +711,8 @@ io.on('connection', function(socket){
 	socket.on('create_story_feedback', function(data){
 		STORY_FEEDBACK_MODULE.create_post(socket, data.user_id, data.story_id, data.rating);
 	});
-	socket.on('get_story_feedback', function(data){
-		STORY_FEEDBACK_MODULE.get_posts(socket, data.story_id);
+	socket.on('read_stories_feedback', function(data){
+		STORY_FEEDBACK_MODULE.read_posts(socket, data.story_id);
 	});
 	socket.on('update_story_feedback', function(data){
 		STORY_FEEDBACK_MODULE.update_post(socket, data.feedback_id, data.rating);
@@ -724,8 +724,8 @@ io.on('connection', function(socket){
 	socket.on('create_comment', function(data){
 		COMMENT_MODULE.create_post(socket, data.user_id, data.story_id, data.comment);
 	});
-	socket.on('get_comments', function(data){
-		COMMENT_MODULE.get_posts(socket, data.story_id);
+	socket.on('read_comments', function(data){
+		COMMENT_MODULE.read_posts(socket, data.story_id);
 	});
 	socket.on('update_comment', function(data){
 		COMMENT_MODULE.update_post(socket, data.comment_id, data.comment);
@@ -737,8 +737,8 @@ io.on('connection', function(socket){
 	socket.on('create_comment_feedback', function(data){
 		COMMENT_FEEDBACK_MODULE.create_post(socket, data.user_id, data.comment_id, data.rating);
 	});
-	socket.on('get_comment_feedback', function(data){
-		COMMENT_FEEDBACK_MODULE.get_posts(socket, data.comment_id);
+	socket.on('read_comments_feedback', function(data){
+		COMMENT_FEEDBACK_MODULE.read_posts(socket, data.comment_id);
 	});
 	socket.on('update_comment_feedback', function(data){
 		COMMENT_FEEDBACK_MODULE.update_post(socket, data.feedback_id, data.rating);

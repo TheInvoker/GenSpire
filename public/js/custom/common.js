@@ -39,10 +39,10 @@ function setUpSockets() {
 	socket.on('create_question_succeed', function(data){
 
 	});
-	socket.on('get_question_fail', function(data){
+	socket.on('read_questions_fail', function(data){
 
 	});
-	socket.on('get_question_succeed', function(data){
+	socket.on('read_questions_succeed', function(data){
 
 	});
 	socket.on('update_question_fail', function(data){
@@ -65,10 +65,10 @@ function setUpSockets() {
 	socket.on('create_question_feedback_succeed', function(data){
 
 	});
-	socket.on('get_question_feedback_fail', function(data){
+	socket.on('read_questions_feedback_fail', function(data){
 
 	});
-	socket.on('get_question_feedback_succeed', function(data){
+	socket.on('read_questions_feedback_succeed', function(data){
 
 	});
 	socket.on('update_question_feedback_fail', function(data){
@@ -91,10 +91,10 @@ function setUpSockets() {
 	socket.on('create_answer_succeed', function(data){
 
 	});
-	socket.on('get_answer_fail', function(data){
+	socket.on('read_answers_fail', function(data){
 
 	});
-	socket.on('get_answer_succeed', function(data){
+	socket.on('read_answers_succeed', function(data){
 
 	});
 	socket.on('update_answer_fail', function(data){
@@ -117,10 +117,10 @@ function setUpSockets() {
 	socket.on('create_answer_feedback_succeed', function(data){
 
 	});
-	socket.on('get_answer_feedback_fail', function(data){
+	socket.on('read_answers_feedback_fail', function(data){
 
 	});
-	socket.on('get_answer_feedback_succeed', function(data){
+	socket.on('read_answers_feedback_succeed', function(data){
 
 	});
 	socket.on('update_answer_feedback_fail', function(data){
@@ -143,10 +143,10 @@ function setUpSockets() {
 	socket.on('create_story_succeed', function(data){
 
 	});
-	socket.on('get_story_fail', function(data){
+	socket.on('read_stories_fail', function(data){
 
 	});
-	socket.on('get_story_succeed', function(data){
+	socket.on('read_stories_succeed', function(data){
 
 	});
 	socket.on('update_story_fail', function(data){
@@ -169,10 +169,10 @@ function setUpSockets() {
 	socket.on('create_story_feedback_succeed', function(data){
 
 	});
-	socket.on('get_story_feedback_fail', function(data){
+	socket.on('read_stories_feedback_fail', function(data){
 
 	});
-	socket.on('get_story_feedback_succeed', function(data){
+	socket.on('read_stories_feedback_succeed', function(data){
 
 	});
 	socket.on('update_story_feedback_fail', function(data){
@@ -195,10 +195,10 @@ function setUpSockets() {
 	socket.on('create_comment_succeed', function(data){
 
 	});
-	socket.on('get_comment_fail', function(data){
+	socket.on('read_comments_fail', function(data){
 
 	});
-	socket.on('get_comment_succeed', function(data){
+	socket.on('read_comments_succeed', function(data){
 
 	});
 	socket.on('update_comment_fail', function(data){
@@ -221,10 +221,10 @@ function setUpSockets() {
 	socket.on('create_comment_feedback_succeed', function(data){
 
 	});
-	socket.on('get_comment_feedback_fail', function(data){
+	socket.on('read_comments_feedback_fail', function(data){
 
 	});
-	socket.on('get_comment_feedback_succeed', function(data){
+	socket.on('read_comments_feedback_succeed', function(data){
 
 	});
 	socket.on('update_comment_feedback_fail', function(data){
@@ -249,7 +249,7 @@ function setUpSockets() {
 		title : 
 		question :
 	});
-	socket.emit('get_questions', {
+	socket.emit('read_questions', {
 	});
 	socket.emit('update_question', {
 		question_id : 
@@ -265,7 +265,7 @@ function setUpSockets() {
 		question_id : 
 		rating :
 	});
-	socket.emit('get_questions_feedback', {
+	socket.emit('read_questions_feedback', {
 		question_id : 
 	});
 	socket.emit('update_question_feedback', {
@@ -288,7 +288,7 @@ function setUpSockets() {
 		question_id : 
 		answer :
 	});
-	socket.emit('get_answer', {
+	socket.emit('read_answers', {
 		question_id : 
 	});
 	socket.emit('update_answer', {
@@ -304,7 +304,7 @@ function setUpSockets() {
 		answer_id : 
 		rating :
 	});
-	socket.emit('get_answers_feedback', {
+	socket.emit('read_answers_feedback', {
 		answer_id : 
 	});
 	socket.emit('update_answer_feedback', {
@@ -330,7 +330,7 @@ function setUpSockets() {
 		title : 
 		story :
 	});
-	socket.emit('get_stories', {
+	socket.emit('read_stories', {
 
 	});
 	socket.emit('update_story', {
@@ -347,7 +347,7 @@ function setUpSockets() {
 		story_id : 
 		rating :
 	});
-	socket.emit('get_story_feedback', {
+	socket.emit('read_stories_feedback', {
 		story_id : 
 	});
 	socket.emit('update_story_feedback', {
@@ -367,7 +367,7 @@ function setUpSockets() {
 		story_id : 
 		comment :
 	});
-	socket.emit('get_comments', {
+	socket.emit('read_comments', {
 		story_id : 
 	});
 	socket.emit('update_comment', {
@@ -383,7 +383,7 @@ function setUpSockets() {
 		comment_id : 
 		rating :
 	});
-	socket.emit('get_comment_feedback', {
+	socket.emit('read_comments_feedback', {
 		comment_id : 
 	});
 	socket.emit('update_comment_feedback', {

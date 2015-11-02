@@ -1,3 +1,7 @@
+var POST = {
+	
+};
+
 $(document).ready(function() {
 	
 	
@@ -243,154 +247,168 @@ function setUpSockets() {
 	
 	
 	
+	POST.create_question = function(user_id, title, question) {
+		socket.emit('create_question', {
+			user_id : user_id,
+			title : title,
+			question : question
+		});
+	};
+	POST.read_questions = function() {
+		socket.emit('read_questions', {});
+	};
+	POST.update_question = function(question_id, title, question) {
+		socket.emit('update_question', {
+			question_id : question_id,
+			title : title,
+			question : question
+		});
+	};
+	POST.delete_question = function(question_id) {
+		socket.emit('delete_question', {
+			question_id : question_id
+		});
+	};
 	
-	socket.emit('create_question', {
-		user_id : 
-		title : 
-		question :
+	POST.create_question_feedback = function(user_id, question_id, rating) {
+		socket.emit('create_question_feedback', {
+			user_id : user_id,
+			question_id : question_id,
+			rating :rating
+		});
 	});
-	socket.emit('read_questions', {
+	POST.read_questions_feedback = function(question_id) {
+		socket.emit('read_questions_feedback', {
+			question_id : question_id
+		});
 	});
-	socket.emit('update_question', {
-		question_id : 
-		title : 
-		question :
+	POST.update_question_feedback = function(feedback_id, rating) {
+		socket.emit('update_question_feedback', {
+			feedback_id : feedback_id,
+			rating : rating
+		});
 	});
-	socket.emit('delete_question', {
-		question_id : 
+	POST.delete_question_feedback = function(feedback_id) {
+		socket.emit('delete_question_feedback', {
+			feedback_id : feedback_id
+		});
 	});
-	
-	socket.emit('create_question_feedback', {
-		user_id : 
-		question_id : 
-		rating :
-	});
-	socket.emit('read_questions_feedback', {
-		question_id : 
-	});
-	socket.emit('update_question_feedback', {
-		feedback_id : 
-		rating : 
-	});
-	socket.emit('delete_question_feedback', {
-		feedback_id : 
-	});
-	
-	
-	
-	
-	
-	
-	
-	
-	socket.emit('create_answer', {
-		user_id : 
-		question_id : 
-		answer :
-	});
-	socket.emit('read_answers', {
-		question_id : 
-	});
-	socket.emit('update_answer', {
-		answer_id : 
-		answer : 
-	});
-	socket.emit('delete_answer', {
-		answer_id : 
-	});
-	
-	socket.emit('create_answer_feedback', {
-		user_id : 
-		answer_id : 
-		rating :
-	});
-	socket.emit('read_answers_feedback', {
-		answer_id : 
-	});
-	socket.emit('update_answer_feedback', {
-		feedback_id : 
-		rating : 
-	});
-	socket.emit('delete_answer_feedback', {
-		feedback_id : 
-	});
+		
+		
+		
+		
+		
+		
+		
+		
+		socket.emit('create_answer', {
+			user_id : 
+			question_id : 
+			answer :
+		});
+		socket.emit('read_answers', {
+			question_id : 
+		});
+		socket.emit('update_answer', {
+			answer_id : 
+			answer : 
+		});
+		socket.emit('delete_answer', {
+			answer_id : 
+		});
+		
+		socket.emit('create_answer_feedback', {
+			user_id : 
+			answer_id : 
+			rating :
+		});
+		socket.emit('read_answers_feedback', {
+			answer_id : 
+		});
+		socket.emit('update_answer_feedback', {
+			feedback_id : 
+			rating : 
+		});
+		socket.emit('delete_answer_feedback', {
+			feedback_id : 
+		});
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	socket.emit('create_story', {
-		user_id : 
-		title : 
-		story :
-	});
-	socket.emit('read_stories', {
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		socket.emit('create_story', {
+			user_id : 
+			title : 
+			story :
+		});
+		socket.emit('read_stories', {
 
-	});
-	socket.emit('update_story', {
-		story_id : 
-		title : 
-		story : 
-	});
-	socket.emit('delete_story', {
-		story_id : 
-	});
-	
-	socket.emit('create_story_feedback', {
-		user_id : 
-		story_id : 
-		rating :
-	});
-	socket.emit('read_stories_feedback', {
-		story_id : 
-	});
-	socket.emit('update_story_feedback', {
-		feedback_id : 
-		rating : 
-	});
-	socket.emit('delete_story_feedback', {
-		feedback_id : 
-	});
+		});
+		socket.emit('update_story', {
+			story_id : 
+			title : 
+			story : 
+		});
+		socket.emit('delete_story', {
+			story_id : 
+		});
+		
+		socket.emit('create_story_feedback', {
+			user_id : 
+			story_id : 
+			rating :
+		});
+		socket.emit('read_stories_feedback', {
+			story_id : 
+		});
+		socket.emit('update_story_feedback', {
+			feedback_id : 
+			rating : 
+		});
+		socket.emit('delete_story_feedback', {
+			feedback_id : 
+		});
 
-	
-	
-	
-	
-	socket.emit('create_comment', {
-		user_id : 
-		story_id : 
-		comment :
-	});
-	socket.emit('read_comments', {
-		story_id : 
-	});
-	socket.emit('update_comment', {
-		comment_id : 
-		comment : 
-	});
-	socket.emit('delete_comment', {
-		comment_id : 
-	});
-	
-	socket.emit('create_comment_feedback', {
-		user_id : 
-		comment_id : 
-		rating :
-	});
-	socket.emit('read_comments_feedback', {
-		comment_id : 
-	});
-	socket.emit('update_comment_feedback', {
-		feedback_id : 
-		rating : 
-	});
-	socket.emit('delete_comment_feedback', {
-		feedback_id : 
-	});
+		
+		
+		
+		
+		socket.emit('create_comment', {
+			user_id : 
+			story_id : 
+			comment :
+		});
+		socket.emit('read_comments', {
+			story_id : 
+		});
+		socket.emit('update_comment', {
+			comment_id : 
+			comment : 
+		});
+		socket.emit('delete_comment', {
+			comment_id : 
+		});
+		
+		socket.emit('create_comment_feedback', {
+			user_id : 
+			comment_id : 
+			rating :
+		});
+		socket.emit('read_comments_feedback', {
+			comment_id : 
+		});
+		socket.emit('update_comment_feedback', {
+			feedback_id : 
+			rating : 
+		});
+		socket.emit('delete_comment_feedback', {
+			feedback_id : 
+		});
 }

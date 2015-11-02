@@ -257,21 +257,25 @@ function setUpSockets() {
 	
 	
 	
-	POST.create_question = function(user_id, title, question) {
+	POST.create_question = function(user_id, title, question, gender_id_list) {
 		socket.emit('create_question', {
 			user_id : user_id,
 			title : title,
-			question : question
+			question : question,
+			gender_id_list : gender_id_list
 		});
 	};
-	POST.read_questions = function() {
-		socket.emit('read_questions', {});
+	POST.read_questions = function(gender_id_list) {
+		socket.emit('read_questions', {
+			gender_id_list : gender_id_list
+		});
 	};
-	POST.update_question = function(question_id, title, question) {
+	POST.update_question = function(question_id, title, question, gender_id_list) {
 		socket.emit('update_question', {
 			question_id : question_id,
 			title : title,
-			question : question
+			question : question,
+			gender_id_list : gender_id_list
 		});
 	};
 	POST.delete_question = function(question_id) {

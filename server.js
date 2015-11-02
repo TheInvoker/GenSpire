@@ -10,7 +10,8 @@ var SQL_MODULE = {
 		host     : 'localhost',
 		user     : 'root',
 		password : 'root',
-		database : 'genspire'
+		database : 'genspire',
+		multipleStatements: true
 	},
 	
 	runSQL : function(socket, callback) {
@@ -30,29 +31,54 @@ var SQL_MODULE = {
 
 var QUESTION_MODULE = {
 
-	create_post : function(socket, user_id, title, question) {
+	create_post : function(socket, user_id, title, question, gender_id_list) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
 			var query = "INSERT INTO question (user_id, date_created, last_modified, title, question) \
-						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(title) + "', '" + connection.escape(question) + "')";
-						 
-			connection.query(query, function(err, rows, fields) {
+				         VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(title) + "', '" + connection.escape(question) + "')";
+
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('create_question_fail',  err.message);
+					connection.end();
 				} else {
-					socket.emit('create_question_succeed',  1);
+					
+					var question_id = result.insertId;
+					
+					var gid = [];
+					for(var i=0; i<gender_id_list.length; i+=1) gid.push("(" + connection.escape(question_id) + ", " + connection.escape(gender_id_list[i]) + ")");
+					
+					var query = "INSERT INTO question_gender (question_id, gender_id) \
+								 VALUES " + gid.join(", ");
+
+					connection.query(query, function(err, result) {
+						if (err) {
+							socket.emit('create_question_fail',  err.message);
+						} else {
+							
+							var question_id = result.insertId;
+							
+							socket.emit('create_question_succeed',  1);
+						}
+						connection.end();
+					});
 				}
-				connection.end();
 			});
 		});
 	},
 	
-	read_posts : function(socket) {
+	read_posts : function(socket, gender_id_list) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "SELECT q.id, q.user_id, q.date_created, q.last_modified, q.title, q.question, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+			for(var i=0; i<gender_id_list.length; i+=1) gender_id_list[i] = connection.escape(gender_id_list[i]);
+			var gid = "(" + gender_id_list.join(",") + ")";
+			
+			var query = "SELECT q.id, q.user_id, q.date_created, q.last_modified, q.title, q.question, u.first_name, u.last_name, u.profile_page, u.avatar_link, g.gender \
 						 FROM question q \
 						 JOIN user u ON u.id=q.user_id \
+						 JOIN gender g ON g.id=u.gender_id \
+						 JOIN question_gender qg ON q.id=qg.question_id \
+						 WHERE qg.gender_id IN " + gid + " \
 						 ORDER BY q.date_created DESC";
 						 
 			connection.query(query, function(err, rows, fields) {
@@ -66,13 +92,22 @@ var QUESTION_MODULE = {
 		});
 	},
 	
-	update_post : function(socket, question_id, title, question) {
+	update_post : function(socket, question_id, title, question, gender_id_list) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "UPDATE question SET last_modified=NOW(), title='" + connection.escape(title) + "', \
-						 question='" + connection.escape(question) + "' WHERE id=" + connection.escape(question_id);
+			var queryList = [];
+			queryList.push("UPDATE question SET last_modified=NOW(), title='" + connection.escape(title) + "', \
+						 question='" + connection.escape(question) + "' WHERE id=" + connection.escape(question_id));
+			queryList.push("DELETE FROM question_gender WHERE question_id=" + connection.escape(question_id));
+			
+			var gid = [];
+			for(var i=0; i<gender_id_list.length; i+=1) gid.push("(" + connection.escape(question_id) + ", " + connection.escape(gender_id_list[i]) + ")");
+			queryList.push("INSERT INTO question_gender (question_id, gender_id) \
+						    VALUES " + gid.join(", "));
 						 
-			connection.query(query, function(err, rows, fields) {
+			var query = queryList.join("; ");
+			
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('update_question_fail',  err.message);
 				} else {
@@ -86,9 +121,13 @@ var QUESTION_MODULE = {
 	delete_post : function(socket, question_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "DELETE FROM question WHERE id=" + connection.escape(question_id);
-
-			connection.query(query, function(err, rows, fields) {
+			var queryList = [];
+			queryList.push("DELETE FROM question WHERE id=" + connection.escape(question_id));
+			queryList.push("DELETE FROM question_gender WHERE question_id=" + connection.escape(question_id));
+			
+			var query = queryList.join("; ");
+			
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('delete_question_fail',  err.message);
 				} else {
@@ -108,7 +147,7 @@ var QUESTION_FEEDBACK_MODULE = {
 			var query = "INSERT INTO question_feedback (user_id, date_created, last_modified, rating, question_id) \
 						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), " + connection.escape(rating) + ", " + connection.escape(question_id) + ")";
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('create_question_feedback_fail',  err.message);
 				} else {
@@ -122,9 +161,10 @@ var QUESTION_FEEDBACK_MODULE = {
 	read_posts : function(socket, question_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link, g.gender \
 						 FROM question_feedback f \
 						 JOIN user u ON u.id=f.user_id \
+						 JOIN gender g ON g.id=u.gender_id \
 						 WHERE f.question_id=" + connection.escape(question_id) + " \
 						 ORDER BY q.date_created ASC";
 						 
@@ -145,7 +185,7 @@ var QUESTION_FEEDBACK_MODULE = {
 			var query = "UPDATE question_feedback SET last_modified=NOW(), rating=" + connection.escape(rating) + " \
 						 WHERE id=" + connection.escape(feedback_id);
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('update_question_feedback_fail',  err.message);
 				} else {
@@ -161,7 +201,7 @@ var QUESTION_FEEDBACK_MODULE = {
 			
 			var query = "DELETE FROM question_feedback WHERE id=" + connection.escape(feedback_id);
 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('delete_question_feedback_fail',  err.message);
 				} else {
@@ -181,7 +221,7 @@ var ANSWER_MODULE = {
 			var query = "INSERT INTO answer (user_id, date_created, last_modified, answer, question_id) \
 						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(answer) + "', " + connection.escape(question_id) + ")";
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('create_answer_fail',  err.message);
 				} else {
@@ -195,9 +235,10 @@ var ANSWER_MODULE = {
 	read_posts : function(socket, question_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "SELECT a.id, a.user_id, a.date_created, a.last_modified, a.answer, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+			var query = "SELECT a.id, a.user_id, a.date_created, a.last_modified, a.answer, u.first_name, u.last_name, u.profile_page, u.avatar_link, g.gender \
 						 FROM answer a \
 						 JOIN user u ON u.id=a.user_id \
+						 JOIN gender g ON g.id=u.gender_id \
 						 WHERE a.question_id = " + connection.escape(question_id) + " \
 						 ORDER BY a.date_created ASC";
 						 
@@ -218,7 +259,7 @@ var ANSWER_MODULE = {
 			var query = "UPDATE answer SET last_modified=NOW(), answer='" + connection.escape(answer) + "', \
 						 WHERE id=" + connection.escape(answer_id);
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('update_answer_fail',  err.message);
 				} else {
@@ -234,7 +275,7 @@ var ANSWER_MODULE = {
 			
 			var query = "DELETE FROM answer WHERE id=" + connection.escape(answer_id);
 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('delete_answer_fail',  err.message);
 				} else {
@@ -254,7 +295,7 @@ var ANSWER_FEEDBACK_MODULE = {
 			var query = "INSERT INTO answer_feedback (user_id, date_created, last_modified, rating, question_id) \
 						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), " + connection.escape(rating) + ", " + connection.escape(answer_id) + ")";
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('create_answer_feedback_fail',  err.message);
 				} else {
@@ -268,9 +309,10 @@ var ANSWER_FEEDBACK_MODULE = {
 	read_posts : function(socket, answer_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link, g.gender \
 						 FROM answer_feedback f \
 						 JOIN user u ON u.id=f.user_id \
+						 JOIN gender g ON g.id=u.gender_id \
 						 WHERE f.answer_id=" + connection.escape(answer_id) + " \
 						 ORDER BY q.date_created ASC";
 						 
@@ -291,7 +333,7 @@ var ANSWER_FEEDBACK_MODULE = {
 			var query = "UPDATE answer_feedback SET last_modified=NOW(), rating=" + connection.escape(rating) + " \
 						 WHERE id=" + connection.escape(feedback_id);
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('update_answer_feedback_fail',  err.message);
 				} else {
@@ -307,7 +349,7 @@ var ANSWER_FEEDBACK_MODULE = {
 			
 			var query = "DELETE FROM answer_feedback WHERE id=" + connection.escape(feedback_id);
 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('delete_answer_feedback_fail',  err.message);
 				} else {
@@ -327,7 +369,7 @@ var STORY_MODULE = {
 			var query = "INSERT INTO story (user_id, date_created, last_modified, title, story) \
 						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(title) + "', '" + connection.escape(story) + "')";
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('create_story_fail',  err.message);
 				} else {
@@ -341,9 +383,10 @@ var STORY_MODULE = {
 	read_posts : function(socket) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "SELECT s.id, s.user_id, s.date_created, s.last_modified, s.title, s.story, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+			var query = "SELECT s.id, s.user_id, s.date_created, s.last_modified, s.title, s.story, u.first_name, u.last_name, u.profile_page, u.avatar_link, g.gender \
 						 FROM story s \
 						 JOIN user u ON u.id=s.user_id \
+						 JOIN gender g ON g.id=u.gender_id \
 						 ORDER BY s.date_created DESC";
 						 
 			connection.query(query, function(err, rows, fields) {
@@ -363,7 +406,7 @@ var STORY_MODULE = {
 			var query = "UPDATE story SET last_modified=NOW(), title='" + connection.escape(title) + "', \
 						 story='" + connection.escape(story) + "' WHERE id=" + connection.escape(story_id);
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('update_story_fail',  err.message);
 				} else {
@@ -379,7 +422,7 @@ var STORY_MODULE = {
 			
 			var query = "DELETE FROM story WHERE id=" + connection.escape(story_id);
 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('delete_story_fail',  err.message);
 				} else {
@@ -399,7 +442,7 @@ var STORY_FEEDBACK_MODULE = {
 			var query = "INSERT INTO story_feedback (user_id, date_created, last_modified, rating, story_id) \
 						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), " + connection.escape(rating) + ", " + connection.escape(story_id) + ")";
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('create_story_feedback_fail',  err.message);
 				} else {
@@ -413,9 +456,10 @@ var STORY_FEEDBACK_MODULE = {
 	read_posts : function(socket, story_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link, g.gender \
 						 FROM story_feedback f \
 						 JOIN user u ON u.id=f.user_id \
+						 JOIN gender g ON g.id=u.gender_id \
 						 WHERE f.story_id=" + connection.escape(story_id) + " \
 						 ORDER BY q.date_created ASC";
 						 
@@ -436,7 +480,7 @@ var STORY_FEEDBACK_MODULE = {
 			var query = "UPDATE story_feedback SET last_modified=NOW(), rating=" + connection.escape(rating) + " \
 						 WHERE id=" + connection.escape(feedback_id);
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('update_story_feedback_fail',  err.message);
 				} else {
@@ -452,7 +496,7 @@ var STORY_FEEDBACK_MODULE = {
 			
 			var query = "DELETE FROM story_feedback WHERE id=" + connection.escape(feedback_id);
 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('delete_story_feedback_fail',  err.message);
 				} else {
@@ -472,7 +516,7 @@ var COMMENT_MODULE = {
 			var query = "INSERT INTO comment (user_id, date_created, last_modified, comment, story_id) \
 						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), '" + connection.escape(comment) + "', " + connection.escape(story_id) + ")";
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('create_comment_fail',  err.message);
 				} else {
@@ -486,9 +530,10 @@ var COMMENT_MODULE = {
 	read_posts : function(socket, story_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "SELECT c.id, c.user_id, c.date_created, c.last_modified, c.comment, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+			var query = "SELECT c.id, c.user_id, c.date_created, c.last_modified, c.comment, u.first_name, u.last_name, u.profile_page, u.avatar_link, g.gender \
 						 FROM comment c \
 						 JOIN user u ON u.id=c.user_id \
+						 JOIN gender g ON g.id=u.gender_id \
 						 WHERE c.story_id = " + connection.escape(story_id) + " \
 						 ORDER BY c.date_created ASC";
 						 
@@ -509,7 +554,7 @@ var COMMENT_MODULE = {
 			var query = "UPDATE comment SET last_modified=NOW(), comment='" + connection.escape(comment) + "', \
 						 WHERE id=" + connection.escape(comment_id);
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('update_comment_fail',  err.message);
 				} else {
@@ -525,7 +570,7 @@ var COMMENT_MODULE = {
 			
 			var query = "DELETE FROM comment WHERE id=" + connection.escape(comment_id);
 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('delete_comment_fail',  err.message);
 				} else {
@@ -545,7 +590,7 @@ var COMMENT_FEEDBACK_MODULE = {
 			var query = "INSERT INTO comment_feedback (user_id, date_created, last_modified, rating, comment_id) \
 						 VALUES (" + connection.escape(user_id) + ", NOW(), NOW(), " + connection.escape(rating) + ", " + connection.escape(comment_id) + ")";
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('create_comment_feedback_fail',  err.message);
 				} else {
@@ -559,9 +604,10 @@ var COMMENT_FEEDBACK_MODULE = {
 	read_posts : function(socket, comment_id) {
 		SQL_MODULE.runSQL(socket, function(connection) {
 			
-			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link \
+			var query = "SELECT f.id, f.user_id, f.date_created, f.last_modified, f.rating, u.first_name, u.last_name, u.profile_page, u.avatar_link, g.gender \
 						 FROM comment_feedback f \
 						 JOIN user u ON u.id=f.user_id \
+						 JOIN gender g ON g.id=u.gender_id \
 						 WHERE f.comment_id=" + connection.escape(comment_id) + " \
 						 ORDER BY q.date_created ASC";
 						 
@@ -582,7 +628,7 @@ var COMMENT_FEEDBACK_MODULE = {
 			var query = "UPDATE comment_feedback SET last_modified=NOW(), rating=" + connection.escape(rating) + " \
 						 WHERE id=" + connection.escape(feedback_id);
 						 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('update_comment_feedback_fail',  err.message);
 				} else {
@@ -598,7 +644,7 @@ var COMMENT_FEEDBACK_MODULE = {
 			
 			var query = "DELETE FROM comment_feedback WHERE id=" + connection.escape(feedback_id);
 
-			connection.query(query, function(err, rows, fields) {
+			connection.query(query, function(err, result) {
 				if (err) {
 					socket.emit('delete_comment_feedback_fail',  err.message);
 				} else {
@@ -644,13 +690,13 @@ io.on('connection', function(socket){
 	
 	
 	socket.on('create_question', function(data){
-		QUESTION_MODULE.create_post(socket, data.user_id, data.title, data.question);
+		QUESTION_MODULE.create_post(socket, data.user_id, data.title, data.question, data.gender_id_list);
 	});
 	socket.on('read_questions', function(data){
-		QUESTION_MODULE.read_posts(socket);
+		QUESTION_MODULE.read_posts(socket, data.gender_id_list);
 	});
 	socket.on('update_question', function(data){
-		QUESTION_MODULE.update_post(socket, data.question_id, data.title, data.question);
+		QUESTION_MODULE.update_post(socket, data.question_id, data.title, data.question, data.gender_id_list);
 	});
 	socket.on('delete_question', function(data){
 		QUESTION_MODULE.delete_post(socket, data.question_id);
